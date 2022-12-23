@@ -1,40 +1,88 @@
+import axios from "axios";
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
+import URL_back from "../const/URL";
+import UserContext from "./UserContext";
 
 export default function Home() {
+    const [userLog, setUserLog] = useContext(UserContext);
+    const [URL, setURL] = useState([]);
+    const [URLshort, setURLshort] = useState("");
+
+    function getInfos() {
+        const requisition = axios.get(URL_back + "/users/me", { headers: {Authorization: 'Bearer ' + userLog.token}});
+        
+        requisition.then((res) => {
+            setUserLog({...userLog, name: res.data.name});
+            setURL(res.data.shortenedUrls);
+        });
+
+        requisition.catch((err) => {
+            if(err.response.status === 401) {
+                alert("Token inválido!");
+            } else if(err.response.status === 404){
+                alert("Usuário não encontrado!");
+            } else {
+                alert(err.response.data);
+            }
+        });
+    };
+
+    useEffect(getInfos, []);
+
+    function deleteURL(id) {
+        const requisition = axios.delete(URL_back + "/urls/" + id, { headers: {Authorization: 'Bearer ' + userLog.token}});
+
+        requisition.then(() => getInfos());
+
+        requisition.catch(err => {
+            if(err.response.status === 401) {
+                alert("Não autorizado!");
+            } else if(err.response.status === 404) {
+                alert("URL não encontrada!");
+            } else {
+                alert(err.response.data);
+            }
+        })
+    }
+
     const links = [];
-    links.push(
-    <Link>
-        <Infos>
-            <p>URL original</p>
-            <p>URL curta</p>
-            <p>Quantidade de visitantes: 03</p>
-        </Infos>
-        <Trash><ion-icon name="trash"></ion-icon></Trash>
-    </Link>);
-    links.push(
-    <Link>
-        <Infos>
-            <p>URL original</p>
-            <p>URL curta</p>
-            <p>Quantidade de visitantes: 03</p>
-        </Infos>
-        <Trash><ion-icon name="trash"></ion-icon></Trash>
-    </Link>);
-    links.push(
-    <Link>
-        <Infos>
-            <p>URL original</p>
-            <p>URL curta</p>
-            <p>Quantidade de visitantes: 03</p>
-        </Infos>
-        <Trash><ion-icon name="trash"></ion-icon></Trash>
-    </Link>);
+    URL.map(e => links.push(
+        <URLdiv key={e.id}>
+            <Infos>
+                <p>{e.url}</p>
+                <p>{e.shortUrl}</p>
+                <p>Quantidade de visitantes: {e.visitCount}</p>
+            </Infos>
+            <Trash onClick={() => {
+                if(window.confirm("Deseja mesmo excluir esse link?")) {
+                    deleteURL(e.id);
+                }
+            }}><ion-icon name="trash"></ion-icon></Trash>
+        </URLdiv>
+    ))
+
+    function newURL(e) {
+        e.preventDefault();
+
+        const requisition = axios.post(URL_back + "/urls/shorten", {url: URLshort}, {headers: {Authorization: "Bearer " + userLog.token}});
+
+        requisition.then(() => {getInfos(); setURLshort("");});
+
+        requisition.catch(err => {
+            if(err.response.status === 401) {
+                alert("Token inválido!");
+            } else {
+                alert(err.response.data);
+            }
+        })
+    }
 
     return(
         <Container>
-            <form>
-                <input type="text" placeholder="Links que cabem no bolso" />
-                <button>Encurtar link</button>
+            <form onSubmit={newURL}>
+                <input type="text" placeholder="Links que cabem no bolso" value={URLshort} onChange={(e) => setURLshort(e.target.value)} required/>
+                <button type="submit">Encurtar link</button>
             </form>
             {links}
         </Container>
@@ -74,7 +122,7 @@ const Container = styled.div`
     }
 `;
 
-const Link = styled.div`
+const URLdiv = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
