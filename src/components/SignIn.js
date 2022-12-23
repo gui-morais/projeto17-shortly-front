@@ -1,12 +1,41 @@
+import axios from "axios";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components"
+import URL_back from "../const/URL";
+import UserContext from "./UserContext";
 
 export default function SignIn() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [userLog, setUserLog] = useContext(UserContext);
+    const navigate = useNavigate();
+
+    function login(e) {
+        e.preventDefault();
+
+        const requisition = axios.post(URL_back + "/signin", {email, password});
+
+        requisition.then((res) => {
+            setUserLog({...userLog, token: res.data});
+            navigate("/me");
+        });
+
+        requisition.catch((err) => {
+            if(err.response.status === 401) {
+                alert("Email ou senha inválidos!");
+            } else {
+                alert(err.response.data);
+            }
+        })
+    }
+
     return(
         <Container>
-            <form>
-                <input type="email" placeholder="Email" />
-                <input type="password" placeholder="Senha" />
-                <button>Entrar</button>
+            <form onSubmit={login}>
+                <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required/>
+                <input type="password" placeholder="Senha" value={password} onChange={e => setPassword(e.target.value)} required/>
+                <button type="submit">Entrar</button>
             </form>
         </Container>
     )

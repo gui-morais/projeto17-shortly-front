@@ -21,7 +21,7 @@ export default function Ranking() {
             <Box>
                 {positions}
             </Box>
-            {(userLog.name === undefined) ? <h1>Crie sua conta para usar nosso serviço!</h1> : ""}
+            {(userLog.token === undefined) ? <h1>Crie sua conta para usar nosso serviço!</h1> : ""}
         </Container>
     )
 }

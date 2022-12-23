@@ -8,7 +8,7 @@ export default function Menu () {
     const [userLog] = useContext(UserContext);
 
     let menu;
-    if(userLog.name === undefined) {
+    if(userLog.token === undefined) {
         menu = (
             <Container login={false}>
                 <Texts>

@@ -11,7 +11,7 @@ export default function SignUp() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const navigate = useNavigate();
 
-    function login(e) {
+    function signup(e) {
         e.preventDefault();
 
         const requisition = axios.post(URL_back + "/signup", {name, email, password, confirmPassword});
@@ -22,7 +22,6 @@ export default function SignUp() {
         });
 
         requisition.catch((err) => {
-            console.log(err.response);
             if(err.response.status === 409) {
                 alert("Usuário já cadastrado!");
             } else {
@@ -33,7 +32,7 @@ export default function SignUp() {
 
     return(
         <Container>
-            <form onSubmit={login}>
+            <form onSubmit={signup}>
                 <input type="text" placeholder="Nome" value={name} onChange={e => setName(e.target.value)} required/>
                 <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required/>
                 <input type="password" placeholder="Senha" value={password} onChange={e => setPassword(e.target.value)} required/>
