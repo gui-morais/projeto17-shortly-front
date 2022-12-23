@@ -1,14 +1,44 @@
-import styled from "styled-components"
+import axios from "axios";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import URL_back from "../const/URL";
 
 export default function SignUp() {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const navigate = useNavigate();
+
+    function login(e) {
+        e.preventDefault();
+
+        const requisition = axios.post(URL_back + "/signup", {name, email, password, confirmPassword});
+
+        requisition.then(() => {
+            alert("Cadastro feito com sucesso!");
+            navigate("/login");
+        });
+
+        requisition.catch((err) => {
+            console.log(err.response);
+            if(err.response.status === 409) {
+                alert("Usuário já cadastrado!");
+            } else {
+                alert(err.response.data);
+            }
+        });
+    }
+
     return(
         <Container>
-            <form>
-                <input type="text" placeholder="Nome" />
-                <input type="email" placeholder="Email" />
-                <input type="password" placeholder="Senha" />
-                <input type="password" placeholder="Confirmar Senha" />
-                <button>Criar Conta</button>
+            <form onSubmit={login}>
+                <input type="text" placeholder="Nome" value={name} onChange={e => setName(e.target.value)} required/>
+                <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required/>
+                <input type="password" placeholder="Senha" value={password} onChange={e => setPassword(e.target.value)} required/>
+                <input type="password" placeholder="Confirmar Senha" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required/>
+                <button type="submit">Criar Conta</button>
             </form>
         </Container>
     )
