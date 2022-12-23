@@ -2,6 +2,7 @@ import { useContext } from "react";
 import styled from "styled-components";
 import UserContext from "./UserContext";
 import logo from "../images/logo.png";
+import { Link } from "react-router-dom";
 
 export default function Menu () {
     const [userLog] = useContext(UserContext);
@@ -11,8 +12,8 @@ export default function Menu () {
         menu = (
             <Container login={false}>
                 <Texts>
-                    <Green>Entrar</Green>
-                    <Grey>Cadastrar-se</Grey>
+                    <NewLink to="/login"><Green>Entrar</Green></NewLink>
+                    <NewLink to="/cadastro"><Grey>Cadastrar-se</Grey></NewLink>
                 </Texts>
             </Container>
         );
@@ -23,8 +24,8 @@ export default function Menu () {
                     <Green>Seja bem-vindo(a), {userLog.name}!</Green>
                 </Texts>
                 <Texts>
-                    <Grey>Home</Grey>
-                    <Grey>Ranking</Grey>
+                    <NewLink to="/me"><Grey>Home</Grey></NewLink>
+                    <NewLink to="/"><Grey>Ranking</Grey></NewLink>
                     <Grey>Sair</Grey>
                 </Texts>
             </Container>
@@ -57,12 +58,14 @@ const Texts = styled.div`
 const Green = styled.p`
     font-size: 15px;
     color: #5D9040;
+    cursor: pointer;
 `;
 
 const Grey = styled.p`
     font-size: 15px;
     color: #9C9C9C;
     margin-left: 15px;
+    cursor: pointer;
 `;
 
 const Logo = styled.div`
@@ -80,3 +83,7 @@ const Logo = styled.div`
         width: 100px;
     }
 `
+
+const NewLink = styled(Link)`
+  text-decoration: none;
+`;
