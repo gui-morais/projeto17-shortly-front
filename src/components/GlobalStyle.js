@@ -28,6 +28,9 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
+	font-family: 'Lexend Deca', sans-serif;
+	padding: 0px 180px;
+	box-sizing: border-box;
 }
 ol, ul {
 	list-style: none;
