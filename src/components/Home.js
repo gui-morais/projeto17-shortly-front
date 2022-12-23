@@ -46,10 +46,22 @@ export default function Home() {
         })
     }
 
+    function goToURL(shortURL) {
+        const requisition = axios.get(URL_back + "/urls/open/" + shortURL);
+
+        requisition.catch(err => {
+            if(err.response.status === 404) {
+                alert("URL não encontrada!");
+            } else {
+                alert(err.response.data);
+            }
+        });
+    }
+
     const links = [];
     URL.map(e => links.push(
         <URLdiv key={e.id}>
-            <Infos>
+            <Infos onClick={() => goToURL(e.shortURL)}>
                 <p>{e.url}</p>
                 <p>{e.shortUrl}</p>
                 <p>Quantidade de visitantes: {e.visitCount}</p>
@@ -60,7 +72,11 @@ export default function Home() {
                 }
             }}><ion-icon name="trash"></ion-icon></Trash>
         </URLdiv>
-    ))
+    ));
+
+    if(URL.length === 0) {
+        links.push(<p>Nenhuma URL encurtada!</p>);
+    }
 
     function newURL(e) {
         e.preventDefault();

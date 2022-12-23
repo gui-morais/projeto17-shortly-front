@@ -2,10 +2,13 @@ import { useContext } from "react";
 import styled from "styled-components";
 import UserContext from "./UserContext";
 import logo from "../images/logo.png";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import axios from "axios";
+import URL_back from "../const/URL";
 
 export default function Menu () {
-    const [userLog] = useContext(UserContext);
+    const [userLog, setUserLog] = useContext(UserContext);
+    const navigate = useNavigate();
 
     let menu;
     if(userLog.token === undefined) {
@@ -26,10 +29,19 @@ export default function Menu () {
                 <Texts>
                     <NewLink to="/me"><Grey>Home</Grey></NewLink>
                     <NewLink to="/"><Grey>Ranking</Grey></NewLink>
-                    <Grey>Sair</Grey>
+                    <Grey onClick={() => signOut()}>Sair</Grey>
                 </Texts>
             </Container>
         );
+    }
+
+    function signOut() {
+        const requisition = axios.delete(URL_back + "/signout", {headers: {Authorization: "Bearer " + userLog.token}});
+
+        requisition.then(() => {
+            setUserLog({});
+            navigate("/");
+        });
     }
 
     return (
