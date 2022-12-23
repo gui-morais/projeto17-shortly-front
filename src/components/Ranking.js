@@ -1,16 +1,32 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import UserContext from "./UserContext";
 import trophy from "../images/trophy.png";
 import styled from "styled-components";
+import URL_back from "../const/URL";
+import axios from "axios";
 
 export default function Ranking() {
     const [userLog] = useContext(UserContext);
+    const [user, setUser] = useState([]);
+
+    function getRanking() {
+        const requisition = axios.get(URL_back + "/ranking");
+
+        requisition.then(res => {
+            setUser(res.data);
+        })
+
+        requisition.catch(err => alert(err.response.data));
+    }
+
+    useEffect(getRanking, []);
+
+
+
     const positions = [];
-    positions.push(<p>1. Fulaninha - 32 links - 1.703.584 visualizações</p>);
-    positions.push(<p>2. Ciclano - 20 links - 1.113.347 visualizações</p>);
-    positions.push(<p>3. Beltrana - 18 links - 852.961 visualizações</p>);
-    positions.push(<p>4. Joaozin - 14 links - 492.173 visualizações</p>);
-    positions.push(<p>5. DEFINITIVAMENTE_NAO_E_UM_BOT - 12345252 links - 37.707 visualizações</p>);
+    user.map((e,i) => positions.push(
+        <p key={i}>{i+1}. {e.name} - {e.linksCount} {e.linksCount === "1" ? "link" : "links"} - {e.visitCount} {e.visitCount === "1" ? "visualização" : "visualizações"}</p>
+    ));
 
     return(
         <Container>
